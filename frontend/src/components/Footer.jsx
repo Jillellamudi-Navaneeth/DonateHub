@@ -24,7 +24,7 @@ const Footer = () => {
                         <ul className="space-y-2">
                             <li><Link to="/" className="text-gray-400 hover:text-primary transition-colors">Home</Link></li>
                             <li><Link to="/about" className="text-gray-400 hover:text-primary transition-colors">About Us</Link></li>
-                            <li><Link to="/contact" className="text-gray-400 hover:text-primary transition-colors">Contact Us</Link></li>
+                            <li><Link to="/learn-more" className="text-gray-400 hover:text-primary transition-colors">Learn More</Link></li>
                             <li><Link to="/donor" className="text-gray-400 hover:text-primary transition-colors">Browse Requests</Link></li>
                         </ul>
                     </div>
@@ -35,7 +35,6 @@ const Footer = () => {
                         <ul className="space-y-2">
                             <li><Link to="/privacy" className="text-gray-400 hover:text-primary transition-colors">Privacy Policy</Link></li>
                             <li><Link to="/terms" className="text-gray-400 hover:text-primary transition-colors">Terms of Service</Link></li>
-                            <li><Link to="/cookies" className="text-gray-400 hover:text-primary transition-colors">Cookie Policy</Link></li>
                         </ul>
                     </div>
 
