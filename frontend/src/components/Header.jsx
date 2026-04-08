@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Heart, LogOut, User, Image as ImageIcon, X, Upload, Menu } from 'lucide-react';
+import { Heart, LogOut, User, Image as ImageIcon, X, Upload, Menu, Mail } from 'lucide-react';
 import api from '../api';
 
 const Header = () => {
