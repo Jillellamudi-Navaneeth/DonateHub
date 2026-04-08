@@ -69,7 +69,7 @@ const ReceiverDashboard = () => {
     }
   }, [viewMode]);
 
-  // Fetch History (Claims & Fulfillments)
+  // Fetch History (Claims & Fulfillments) - called on mount & when viewMode needs it
   const fetchHistoryData = async () => {
     if (!user?.id) return;
     try {
@@ -127,6 +127,12 @@ const ReceiverDashboard = () => {
     }
   };
 
+  useEffect(() => {
+    if (user?.id) {
+      fetchHistoryData();
+    }
+  }, [user]);
+
   const handleHistoryClick = (filter) => {
     setHistoryFilter(filter);
     setShowHistory(true);
@@ -168,14 +174,17 @@ const ReceiverDashboard = () => {
   const allRelevantItems = [...mappedRequests, ...claims, ...fulfillments];
 
   const total = allRelevantItems.length;
-  const pending = allRelevantItems.filter((i) => ['PENDING', 'APPROVED', 'OPEN', 'PARTIALLY_FULFILLED'].includes(i.status)).length;
+  const openCount = allRelevantItems.filter((i) => ['OPEN', 'PARTIALLY_FULFILLED'].includes(i.status)).length;
+  const pending = allRelevantItems.filter((i) => ['PENDING', 'APPROVED'].includes(i.status)).length;
   const fulfilled = allRelevantItems.filter((i) => ['DELIVERED', 'COMPLETED', 'RECEIVED', 'FULFILLED'].includes(i.status)).length;
 
   // History Items filtered
   const historyItems = (() => {
     let result = [...allRelevantItems];
-    if (historyFilter === 'pending') {
-      result = result.filter((i) => ['PENDING', 'APPROVED', 'OPEN', 'PARTIALLY_FULFILLED'].includes(i.status));
+    if (historyFilter === 'open') {
+      result = result.filter((i) => ['OPEN', 'PARTIALLY_FULFILLED'].includes(i.status));
+    } else if (historyFilter === 'pending') {
+      result = result.filter((i) => ['PENDING', 'APPROVED'].includes(i.status));
     } else if (historyFilter === 'fulfilled') {
       result = result.filter((i) => ['DELIVERED', 'COMPLETED', 'RECEIVED', 'FULFILLED'].includes(i.status));
     }
@@ -250,9 +259,10 @@ const ReceiverDashboard = () => {
 
   const getFilterBtnClass = (filter) => {
     if (historyFilter === filter) {
-      if (filter === 'all') return 'bg-teal-600 text-white';
-      if (filter === 'pending') return 'bg-teal-600 text-white';
-      if (filter === 'fulfilled') return 'bg-green-600 text-white';
+      if (filter === 'all') return 'bg-teal-600 text-white shadow-md';
+      if (filter === 'open') return 'bg-teal-600 text-white shadow-md';
+      if (filter === 'pending') return 'bg-teal-600 text-white shadow-md';
+      if (filter === 'fulfilled') return 'bg-green-600 text-white shadow-md';
     }
     return 'bg-gray-100 text-gray-600 hover:bg-gray-200';
   };
@@ -279,34 +289,37 @@ const ReceiverDashboard = () => {
               {/* Total */}
               <div
                 onClick={() => handleHistoryClick('all')}
-                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition-colors"
+                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition-all hover:scale-105"
               >
                 <span className="block text-3xl font-bold">{total}</span>
-                <span className="text-sm opacity-90">
-                  Total Requests
-                </span>
+                <span className="text-sm opacity-90 font-medium">Total Activity</span>
+              </div>
+
+              {/* Open */}
+              <div
+                onClick={() => handleHistoryClick('open')}
+                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition-all hover:scale-105"
+              >
+                <span className="block text-3xl font-bold">{openCount}</span>
+                <span className="text-sm opacity-90 font-medium">Open Requests</span>
               </div>
 
               {/* Pending */}
               <div
                 onClick={() => handleHistoryClick('pending')}
-                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition-colors"
+                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition-all hover:scale-105"
               >
                 <span className="block text-3xl font-bold">{pending}</span>
-                <span className="text-sm opacity-90">
-                  Pending Requests
-                </span>
+                <span className="text-sm opacity-90 font-medium">Pending Delivery</span>
               </div>
 
               {/* Fulfilled */}
               <div
                 onClick={() => handleHistoryClick('fulfilled')}
-                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition-colors"
+                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition-all hover:scale-105"
               >
                 <span className="block text-3xl font-bold">{fulfilled}</span>
-                <span className="text-sm opacity-90">
-                  Fulfilled Requests
-                </span>
+                <span className="text-sm opacity-90 font-medium">Fulfilled</span>
               </div>
             </div>
           </div>
@@ -328,28 +341,28 @@ const ReceiverDashboard = () => {
               </button>
             </div>
 
-            <div className="flex gap-2 mb-4">
+            <div className="flex flex-wrap gap-2 mb-4">
               <button
                 onClick={() => setHistoryFilter('all')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${getFilterBtnClass(
-                  'all'
-                )}`}
+                className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${getFilterBtnClass('all')}`}
               >
                 All ({total})
               </button>
               <button
+                onClick={() => setHistoryFilter('open')}
+                className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${getFilterBtnClass('open')}`}
+              >
+                Open ({openCount})
+              </button>
+              <button
                 onClick={() => setHistoryFilter('pending')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${getFilterBtnClass(
-                  'pending'
-                )}`}
+                className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${getFilterBtnClass('pending')}`}
               >
                 Pending ({pending})
               </button>
               <button
                 onClick={() => setHistoryFilter('fulfilled')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${getFilterBtnClass(
-                  'fulfilled'
-                )}`}
+                className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${getFilterBtnClass('fulfilled')}`}
               >
                 Fulfilled ({fulfilled})
               </button>

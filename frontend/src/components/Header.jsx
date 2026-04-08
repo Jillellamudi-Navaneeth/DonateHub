@@ -11,9 +11,12 @@ const Header = () => {
     const [images, setImages] = useState([]);
     const [uploading, setUploading] = useState(false);
 
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
     const handleLogout = () => {
         logout();
-        navigate('/login');
+        navigate('/login', { replace: true });
+        setIsLogoutModalOpen(false);
     };
 
     const handleImageChange = (e) => {
@@ -54,6 +57,24 @@ const Header = () => {
             alert('Failed to update gallery');
         } finally {
             setUploading(false);
+        }
+    };
+
+    const handleDeleteGalleryImage = async (imgUrl) => {
+        if (!window.confirm('Are you sure you want to delete this image from your gallery?')) return;
+        
+        try {
+            await api.delete(`/users/${user.id}/gallery`, {
+                data: { imageUrl: imgUrl }
+            });
+            alert('Image deleted successfully!');
+            if (updateUser) {
+                const newGallery = user.galleryImages.filter(url => url !== imgUrl);
+                updateUser({ galleryImages: newGallery });
+            }
+        } catch (err) {
+            console.error('Failed to delete image:', err);
+            alert('Failed to delete image from gallery');
         }
     };
 
@@ -100,7 +121,7 @@ const Header = () => {
                                         )}
                                         {user.fullName || 'Profile'}
                                     </Link>
-                                    <button onClick={handleLogout} className="flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700">
+                                    <button onClick={() => setIsLogoutModalOpen(true)} className="flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700">
                                         <LogOut size={18} /> Logout
                                     </button>
                                 </>
@@ -115,7 +136,7 @@ const Header = () => {
                                         )}
                                         {user.fullName || 'Profile'}
                                     </Link>
-                                    <button onClick={handleLogout} className="flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700">
+                                    <button onClick={() => setIsLogoutModalOpen(true)} className="flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700">
                                         <LogOut size={18} /> Logout
                                     </button>
                                 </>
@@ -158,6 +179,13 @@ const Header = () => {
                                         {user.galleryImages.map((imgUrl, index) => (
                                             <div key={index} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 shadow-sm transition-transform hover:scale-105 group">
                                                 <img src={getImageUrl(imgUrl)} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" />
+                                                <button
+                                                    onClick={() => handleDeleteGalleryImage(imgUrl)}
+                                                    className="absolute top-1 right-1 bg-red-600/80 hover:bg-red-600 text-white rounded-full p-1.5 transition-all opacity-0 group-hover:opacity-100 shadow-md backdrop-blur-sm"
+                                                    title="Delete image"
+                                                >
+                                                    <X size={14} />
+                                                </button>
                                             </div>
                                         ))}
                                     </div>
@@ -224,6 +252,34 @@ const Header = () => {
                                 className="px-4 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary/90 disabled:opacity-50"
                             >
                                 {uploading ? 'Uploading...' : 'Save Gallery'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Logout Confirmation Modal */}
+            {isLogoutModalOpen && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col p-6 border border-gray-100">
+                        <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mb-4 mx-auto">
+                            <LogOut className="text-red-600" size={24} />
+                        </div>
+                        
+                        <h2 className="text-xl font-bold text-gray-900 text-center mb-2">Confirm Logout</h2>
+                        <p className="text-gray-600 text-center mb-8">Are you sure you want to log out of your account?</p>
+                        
+                        <div className="flex flex-col gap-3">
+                            <button
+                                onClick={handleLogout}
+                                className="w-full py-2.5 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors shadow-lg shadow-red-200"
+                            >
+                                Yes, Log Out
+                            </button>
+                            <button
+                                onClick={() => setIsLogoutModalOpen(false)}
+                                className="w-full py-2.5 bg-gray-100 text-gray-700 rounded-lg font-bold hover:bg-gray-200 transition-colors"
+                            >
+                                Cancel
                             </button>
                         </div>
                     </div>

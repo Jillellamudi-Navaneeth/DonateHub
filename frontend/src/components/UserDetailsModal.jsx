@@ -33,7 +33,7 @@ const UserDetailsModal = ({ isOpen, onClose, user }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose}></div>
-            <div className="bg-white rounded-2xl shadow-2xl z-10 w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in duration-200">
+            <div className="bg-white rounded-2xl shadow-2xl z-10 w-full max-w-md max-h-[90vh] overflow-y-auto overflow-x-hidden relative animate-in fade-in zoom-in duration-200 custom-scrollbar">
 
                 {/* Close Button */}
                 <button

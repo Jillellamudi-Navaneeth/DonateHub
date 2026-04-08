@@ -25,9 +25,15 @@ const Signup = () => {
     });
     const [otp, setOtp] = useState('');
     const [otpSent, setOtpSent] = useState(false);
-    const { register } = useAuth();
+    const { user, register } = useAuth();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    React.useEffect(() => {
+        if (user) {
+            navigate(user.role === 'RECEIVER' ? '/receiver' : '/donor', { replace: true });
+        }
+    }, [user, navigate]);
 
     const handleSendOtp = async () => {
         if (!formData.email || !formData.email.includes('@')) {

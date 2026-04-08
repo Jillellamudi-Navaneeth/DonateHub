@@ -22,6 +22,9 @@ public class UserService {
     @Autowired
     private DonationClaimRepository donationClaimRepository;
 
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
     public User register(Dtos.RegisterRequest request) {
 
         if (request.getEmail() == null || request.getEmail().isBlank()) {
@@ -154,30 +157,12 @@ public class UserService {
         }
 
         try {
-            String uploadDir = "uploads/profile_pictures/";
-            java.io.File directory = new java.io.File(uploadDir);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-
-            String originalFilename = file.getOriginalFilename();
-            String extension = "";
-            if (originalFilename != null && originalFilename.contains(".")) {
-                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            }
-
-            String fileName = "user_" + userId + "_" + System.currentTimeMillis() + extension;
-            java.nio.file.Path filePath = java.nio.file.Paths.get(uploadDir, fileName);
-            java.nio.file.Files.copy(file.getInputStream(), filePath,
-                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-
-            String fileUrl = "/uploads/profile_pictures/" + fileName;
+            String fileUrl = cloudinaryService.uploadFile(file, "profile_pictures");
             user.setProfileImageUrl(fileUrl);
             userRepository.save(user);
-
             return fileUrl;
         } catch (java.io.IOException e) {
-            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+            throw new RuntimeException("Could not upload profile picture to cloud. Error: " + e.getMessage());
         }
     }
 
@@ -200,25 +185,9 @@ public class UserService {
         java.util.List<String> uploadedUrls = new java.util.ArrayList<>();
         
         try {
-            String uploadDir = "uploads/gallery_images/";
-            java.io.File directory = new java.io.File(uploadDir);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-
             for (org.springframework.web.multipart.MultipartFile file : files) {
                 if (!file.isEmpty()) {
-                    String originalFilename = file.getOriginalFilename();
-                    String extension = "";
-                    if (originalFilename != null && originalFilename.contains(".")) {
-                        extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-                    }
-
-                    String fileName = "user_gallery_" + userId + "_" + System.currentTimeMillis() + "_" + java.util.UUID.randomUUID().toString().substring(0, 5) + extension;
-                    java.nio.file.Path filePath = java.nio.file.Paths.get(uploadDir, fileName);
-                    java.nio.file.Files.copy(file.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-
-                    String fileUrl = "/uploads/gallery_images/" + fileName;
+                    String fileUrl = cloudinaryService.uploadFile(file, "gallery_images");
                     uploadedUrls.add(fileUrl);
                 }
             }
@@ -227,9 +196,30 @@ public class UserService {
             userRepository.save(user);
 
         } catch (java.io.IOException e) {
-            throw new RuntimeException("Could not store the gallery files. Error: " + e.getMessage());
+            throw new RuntimeException("Could not upload gallery files to cloud. Error: " + e.getMessage());
         }
 
         return user.getGalleryImages();
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteGalleryImage(Long userId, String imageUrl) {
+        User user = getUserById(userId);
+        
+        if (user.getGalleryImages() == null || !user.getGalleryImages().contains(imageUrl)) {
+            throw new RuntimeException("Image not found in gallery");
+        }
+        
+        // Remove from database
+        user.getGalleryImages().remove(imageUrl);
+        
+        // Delete from Cloudinary
+        try {
+            cloudinaryService.deleteFile(imageUrl);
+        } catch (java.io.IOException e) {
+            System.err.println("Could not delete file from Cloudinary: " + imageUrl + ". Error: " + e.getMessage());
+        }
+        
+        userRepository.save(user);
     }
 }

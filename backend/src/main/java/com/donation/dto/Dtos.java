@@ -751,4 +751,19 @@ public class Dtos {
             this.description = description;
         }
     }
+
+    public static class DeleteGalleryImageDto {
+        private String imageUrl;
+
+        public DeleteGalleryImageDto() {
+        }
+
+        public String getImageUrl() {
+            return imageUrl;
+        }
+
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+    }
 }

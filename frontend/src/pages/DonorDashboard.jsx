@@ -34,12 +34,25 @@ const DonorDashboard = () => {
         fetchData();
     }, [user]);
 
-    const fetchRequests = async () => {
+    // Simplified fetchData - no longer needs separate fetchRequests helper for refresh
+    const fetchData = async () => {
         try {
-            const response = await api.get('/requests');
-            setRequests(Array.isArray(response.data.data) ? response.data.data : []);
+            setLoading(true);
+            const [requestsRes, fulfillmentsRes, claimsRes, donationsRes] = await Promise.all([
+                api.get('/requests'),
+                user?.id ? api.get(`/requests/donor/${user.id}/fulfillments`) : Promise.resolve({ data: { data: [] } }),
+                user?.id ? api.get(`/donations/claims/donor/${user.id}`) : Promise.resolve({ data: { data: [] } }),
+                user?.id ? api.get(`/donations/donor/${user.id}`) : Promise.resolve({ data: { data: [] } })
+            ]);
+            setRequests(Array.isArray(requestsRes.data.data) ? requestsRes.data.data : []);
+            setFulfillments(Array.isArray(fulfillmentsRes.data.data) ? fulfillmentsRes.data.data : []);
+            setClaims(Array.isArray(claimsRes.data.data) ? claimsRes.data.data : []);
+            setDonations(Array.isArray(donationsRes.data.data) ? donationsRes.data.data : []);
         } catch (error) {
             console.error(error);
+            setError("Could not load donation data.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -68,26 +81,7 @@ const DonorDashboard = () => {
 
     }, [categoryFilter, locationFilter, sortOrder, requests]);
 
-    const fetchData = async () => {
-        try {
-            setLoading(true);
-            const [requestsRes, fulfillmentsRes, claimsRes, donationsRes] = await Promise.all([
-                api.get('/requests'),
-                user?.id ? api.get(`/requests/donor/${user.id}/fulfillments`) : Promise.resolve({ data: { data: [] } }),
-                user?.id ? api.get(`/donations/claims/donor/${user.id}`) : Promise.resolve({ data: { data: [] } }),
-                user?.id ? api.get(`/donations/donor/${user.id}`) : Promise.resolve({ data: { data: [] } })
-            ]);
-            setRequests(Array.isArray(requestsRes.data.data) ? requestsRes.data.data : []);
-            setFulfillments(Array.isArray(fulfillmentsRes.data.data) ? fulfillmentsRes.data.data : []);
-            setClaims(Array.isArray(claimsRes.data.data) ? claimsRes.data.data : []);
-            setDonations(Array.isArray(donationsRes.data.data) ? donationsRes.data.data : []);
-        } catch (error) {
-            console.error(error);
-            setError("Could not load donation data.");
-        } finally {
-            setLoading(false);
-        }
-    };
+    // fetchData logic is now consolidated above
 
     const handleAcceptClaim = async (claimId) => {
         try {
@@ -297,8 +291,16 @@ const DonorDashboard = () => {
 
                         <div className="flex gap-4 flex-wrap">
                             <div
+                                onClick={() => handleBoxClick('all')}
+                                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition shadow-sm hover:scale-105"
+                            >
+                                <span className="block text-3xl font-bold">{counts.all}</span>
+                                <span className="text-sm opacity-90 font-medium">Total Activity</span>
+                            </div>
+
+                            <div
                                 onClick={() => handleBoxClick('open')}
-                                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition"
+                                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition shadow-sm hover:scale-105"
                             >
                                 <span className="block text-3xl font-bold">{counts.open}</span>
                                 <span className="text-sm opacity-90 font-medium">Open Requests</span>
@@ -306,18 +308,18 @@ const DonorDashboard = () => {
 
                             <div
                                 onClick={() => handleBoxClick('active')}
-                                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition"
+                                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition shadow-sm hover:scale-105"
                             >
                                 <span className="block text-3xl font-bold">{counts.active}</span>
-                                <span className="text-sm opacity-90 font-medium">Active Requests</span>
+                                <span className="text-sm opacity-90 font-medium">Active Items</span>
                             </div>
 
                             <div
                                 onClick={() => handleBoxClick('fulfilled')}
-                                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition"
+                                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition shadow-sm hover:scale-105"
                             >
                                 <span className="block text-3xl font-bold">{counts.fulfilled}</span>
-                                <span className="text-sm opacity-90 font-medium">Fulfilled Requests</span>
+                                <span className="text-sm opacity-90 font-medium">Fulfilled</span>
                             </div>
                         </div>
                     </div>
@@ -594,7 +596,7 @@ const DonorDashboard = () => {
                                 <RequestCard
                                     key={req.id}
                                     request={req}
-                                    onUpdate={fetchRequests}
+                                    onUpdate={fetchData}
                                 />
                             ))}
 

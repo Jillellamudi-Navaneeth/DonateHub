@@ -83,4 +83,12 @@ public class UserController {
         return ResponseEntity.ok(
                 new ApiResponse<>(HttpStatus.OK.value(), "Gallery images uploaded successfully", imageUrls));
     }
+
+    @DeleteMapping("/{id}/gallery")
+    public ResponseEntity<ApiResponse<Void>> deleteGalleryImage(
+            @PathVariable Long id,
+            @RequestBody Dtos.DeleteGalleryImageDto dto) {
+        userService.deleteGalleryImage(id, dto.getImageUrl());
+        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Gallery image deleted successfully", null));
+    }
 }
