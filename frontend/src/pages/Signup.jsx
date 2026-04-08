@@ -43,7 +43,7 @@ const Signup = () => {
         try {
             await api.post('/auth/send-otp', { email: formData.email });
             setOtpSent(true);
-            alert('OTP sent to your email (Check backend console)');
+            alert('OTP sent to your email');
         } catch (error) {
             alert('Failed to send OTP: ' + (error.response?.data?.message || error.message));
         }

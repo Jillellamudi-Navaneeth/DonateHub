@@ -18,6 +18,9 @@ public class OtpService {
     private final Map<String, String> otpStorage = new ConcurrentHashMap<>();
     private final Map<String, Long> otpExpiry = new ConcurrentHashMap<>();
 
+    @org.springframework.beans.factory.annotation.Value("${spring.mail.username:noreply.donatehub@gmail.com}")
+    private String fromEmail;
+
     private static final long OTP_VALID_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 
     public String generateOtp(String email) {
@@ -33,13 +36,12 @@ public class OtpService {
             message.setTo(email);
             message.setSubject("Your DonateHub OTP Code");
             message.setText("Your OTP for DonateHub registration is: " + otp + "\n\nThis OTP is valid for 5 minutes.\n\nIf you didn't request this, please ignore this email.");
-            message.setFrom("donatehub@gmail.com");
+            message.setFrom(fromEmail);
             mailSender.send(message);
             System.out.println("OTP sent to " + email + ": " + otp);
         } catch (Exception e) {
-            // Fallback to console if email fails
-            System.out.println("Email sending failed. OTP for " + email + ": " + otp);
-            System.err.println("Email error: " + e.getMessage());
+            System.err.println("Email error for " + email + ": " + e.getMessage());
+            throw new RuntimeException("Failed to send OTP to your email. Please check your email address or try again later.");
         }
 
         return otp;

@@ -33,7 +33,7 @@ const UserDetailsModal = ({ isOpen, onClose, user }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose}></div>
-            <div className="bg-white rounded-2xl shadow-2xl z-10 w-full max-w-md max-h-[90vh] overflow-y-auto overflow-x-hidden relative animate-in fade-in zoom-in duration-200 custom-scrollbar">
+            <div className="bg-white rounded-2xl shadow-2xl z-10 w-full max-w-md max-h-[95vh] sm:max-h-[90vh] overflow-y-auto overflow-x-hidden relative animate-in fade-in zoom-in duration-300 custom-scrollbar">
 
                 {/* Close Button */}
                 <button
@@ -44,7 +44,7 @@ const UserDetailsModal = ({ isOpen, onClose, user }) => {
                 </button>
 
                 {/* Header Profile Card Area */}
-                <div className="bg-gradient-to-r from-primary to-primary-dark p-8 pb-12 relative flex flex-col items-center text-center">
+                <div className="bg-gradient-to-r from-primary to-primary-dark p-6 sm:p-8 pb-10 sm:pb-12 relative flex flex-col items-center text-center">
                     <div
                         className={`w-28 h-28 bg-white/20 backdrop-blur-sm border-4 border-white/40 shadow-xl rounded-full flex items-center justify-center overflow-hidden mb-4 relative group ${user.profileImageUrl ? 'cursor-pointer hover:scale-105 transition-all' : ''}`}
                         onClick={() => user.profileImageUrl && setIsViewingDp(true)}
@@ -84,7 +84,7 @@ const UserDetailsModal = ({ isOpen, onClose, user }) => {
                 </div>
 
                 {/* Details Section */}
-                <div className="p-8 pt-6 space-y-6">
+                <div className="p-5 sm:p-8 pt-6 space-y-5 sm:space-y-6">
 
                     <div className="flex items-center gap-4 group">
                         <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition shadow-sm border border-blue-100">
@@ -144,7 +144,7 @@ const UserDetailsModal = ({ isOpen, onClose, user }) => {
 
                 {/* Receiver Gallery Images */}
                 {user?.galleryImages && user.galleryImages.length > 0 && (
-                    <div className="px-8 pb-6 pt-0 border-t border-gray-100 mt-2">
+                    <div className="px-5 sm:px-8 pb-6 pt-0 border-t border-gray-100 mt-2">
                         <p className="text-sm font-semibold text-gray-400 tracking-wider mb-3 mt-4">GALLERY / NEEDS</p>
                         <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
                             {user.galleryImages.map((imgUrl, index) => (

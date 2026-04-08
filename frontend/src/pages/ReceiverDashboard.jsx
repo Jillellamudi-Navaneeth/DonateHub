@@ -285,41 +285,41 @@ const ReceiverDashboard = () => {
             <p className="text-xl opacity-90 mb-8">
               Browse available donations or post your needs. Track all your requests here.
             </p>
-            <div className="flex gap-4 flex-wrap">
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 md:gap-4 mt-8 md:mt-0">
               {/* Total */}
               <div
                 onClick={() => handleHistoryClick('all')}
-                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition-all hover:scale-105"
+                className="bg-white/20 backdrop-blur-md p-3 md:p-4 rounded-xl text-center cursor-pointer hover:bg-white/30 transition-all hover:scale-105 border border-white/20"
               >
-                <span className="block text-3xl font-bold">{total}</span>
-                <span className="text-sm opacity-90 font-medium">Total Activity</span>
+                <span className="block text-2xl md:text-3xl font-bold">{total}</span>
+                <span className="text-[10px] md:text-sm opacity-90 font-bold uppercase tracking-wider">Total</span>
               </div>
 
               {/* Open */}
               <div
                 onClick={() => handleHistoryClick('open')}
-                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition-all hover:scale-105"
+                className="bg-white/20 backdrop-blur-md p-3 md:p-4 rounded-xl text-center cursor-pointer hover:bg-white/30 transition-all hover:scale-105 border border-white/20"
               >
-                <span className="block text-3xl font-bold">{openCount}</span>
-                <span className="text-sm opacity-90 font-medium">Open Requests</span>
+                <span className="block text-2xl md:text-3xl font-bold">{openCount}</span>
+                <span className="text-[10px] md:text-sm opacity-90 font-bold uppercase tracking-wider">Open</span>
               </div>
 
               {/* Pending */}
               <div
                 onClick={() => handleHistoryClick('pending')}
-                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition-all hover:scale-105"
+                className="bg-white/20 backdrop-blur-md p-3 md:p-4 rounded-xl text-center cursor-pointer hover:bg-white/30 transition-all hover:scale-105 border border-white/20"
               >
-                <span className="block text-3xl font-bold">{pending}</span>
-                <span className="text-sm opacity-90 font-medium">Pending Delivery</span>
+                <span className="block text-2xl md:text-3xl font-bold">{pending}</span>
+                <span className="text-[10px] md:text-sm opacity-90 font-bold uppercase tracking-wider">Pending</span>
               </div>
 
               {/* Fulfilled */}
               <div
                 onClick={() => handleHistoryClick('fulfilled')}
-                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition-all hover:scale-105"
+                className="bg-white/20 backdrop-blur-md p-3 md:p-4 rounded-xl text-center cursor-pointer hover:bg-white/30 transition-all hover:scale-105 border border-white/20"
               >
-                <span className="block text-3xl font-bold">{fulfilled}</span>
-                <span className="text-sm opacity-90 font-medium">Fulfilled</span>
+                <span className="block text-2xl md:text-3xl font-bold">{fulfilled}</span>
+                <span className="text-[10px] md:text-sm opacity-90 font-bold uppercase tracking-wider">Done</span>
               </div>
             </div>
           </div>
@@ -373,74 +373,88 @@ const ReceiverDashboard = () => {
             ) : historyItems.length === 0 ? (
               <div className="text-center py-6 text-gray-500">No records found</div>
             ) : (
-              <div className="space-y-3 max-h-80 overflow-y-auto">
+              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-1">
                 {historyItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center gap-3 p-4 border rounded-lg hover:shadow-md"
+                    className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 border rounded-xl hover:shadow-md transition bg-white group"
                   >
-                    <div
-                      className={`w-12 h-12 rounded-lg flex items-center justify-center ${['APPROVED', 'DELIVERED', 'COMPLETED', 'RECEIVED', 'FULFILLED'].includes(item.status)
-                        ? 'bg-green-100 text-green-600'
-                        : item.status === 'PENDING'
-                          ? 'bg-blue-100 text-blue-600'
-                          : 'bg-gray-100 text-gray-600'
-                        }`}
-                    >
-                      {['COMPLETED', 'DELIVERED', 'RECEIVED', 'FULFILLED'].includes(item.status) ? (
-                        <CheckCircle size={24} />
-                      ) : (
-                        <Package size={24} />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-bold text-gray-900">
-                        {item.item} ({item.quantity})
-                      </p>
-                      <div className="text-sm text-gray-500">
-                        {item.source === 'request' ? (
-                          'Posted by You'
+                    <div className="flex items-center gap-4 flex-1">
+                      <div
+                        className={`w-12 h-12 shrink-0 rounded-xl flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105 ${['APPROVED', 'DELIVERED', 'COMPLETED', 'RECEIVED', 'FULFILLED'].includes(item.status)
+                          ? 'bg-teal-500'
+                          : item.status === 'PENDING'
+                            ? 'bg-blue-500'
+                            : 'bg-gray-500'
+                          }`}
+                      >
+                        {['COMPLETED', 'DELIVERED', 'RECEIVED', 'FULFILLED'].includes(item.status) ? (
+                          <CheckCircle size={24} />
                         ) : (
-                          <div className="flex items-center gap-2">
-                            <span>From {item.donor}</span>
-                            {getUserTypeInfo(item.donorCount) && (
-                              <span className={`px-2 py-0.5 rounded text-xs font-bold border ${getUserTypeInfo(item.donorCount).bg} ${getUserTypeInfo(item.donorCount).color} ${getUserTypeInfo(item.donorCount).border}`}>
-                                {getUserTypeInfo(item.donorCount).type}
-                              </span>
-                            )}
-                          </div>
+                          <Package size={24} />
                         )}
-                        <span className="text-xs text-gray-400 block mt-0.5">
-                          {item.source === 'claim' ? '(Claimed donation)' : item.source === 'fulfillment' ? '(Fulfilled request)' : '(Your request)'}
-                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
+                          <div className="min-w-0">
+                            <h4 className="font-bold text-gray-900 group-hover:text-teal-600 transition truncate">
+                              {item.item} ({item.quantity})
+                            </h4>
+                            <div className="text-sm text-gray-500 truncate">
+                              {item.source === 'request' ? (
+                                'Posted by You'
+                              ) : (
+                                <div className="flex items-center gap-2 truncate">
+                                  <span>From {item.donor}</span>
+                                  {getUserTypeInfo(item.donorCount) && (
+                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold border shrink-0 ${getUserTypeInfo(item.donorCount).bg} ${getUserTypeInfo(item.donorCount).color} ${getUserTypeInfo(item.donorCount).border}`}>
+                                      {getUserTypeInfo(item.donorCount).type}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <span className={`self-start sm:self-auto px-3 py-1 text-[10px] font-bold rounded-full border uppercase tracking-wider shrink-0 ${getStatusColor(item.status)}`}>
+                            {['COMPLETED', 'FULFILLED', 'RECEIVED', 'DELIVERED'].includes(item.status) ? 'COMPLETED' : item.status}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 mt-2">
+                           <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 bg-gray-50 px-2 py-0.5 rounded border">
+                            {item.source === 'claim' ? 'Claim' : item.source === 'fulfillment' ? 'Donation' : 'Your Request'}
+                          </span>
+                          <span className="text-xs text-gray-400 font-medium">
+                            {item.dateStr}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`px-3 py-1 text-sm rounded-full border ${getStatusColor(item.status)}`}>
-                        {['COMPLETED', 'FULFILLED', 'RECEIVED', 'DELIVERED'].includes(item.status) ? 'COMPLETED & FULFILLED' : item.status}
-                      </span>
-                      {item.canMarkReceived && (
-                        <button
-                          onClick={() => handleMarkReceived(item)}
-                          disabled={actionLoading === item.id}
-                          className="px-3 py-1.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark disabled:opacity-50"
-                        >
-                          {actionLoading === item.id ? '...' : 'Mark Received'}
-                        </button>
-                      )}
-                      {item.reportedUserId && (
-                        <button
-                          onClick={() => {
-                            setReportingItem(item);
-                            setIsReportModalOpen(true);
-                          }}
-                          className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100"
-                          title="Report Donor"
-                        >
-                          <ShieldAlert size={18} />
-                        </button>
-                      )}
-                    </div>
+                    
+                    {(item.canMarkReceived || item.reportedUserId) && (
+                      <div className="flex gap-2 mt-2 sm:mt-0 sm:ml-auto w-full sm:w-auto border-t sm:border-0 pt-3 sm:pt-0">
+                        {item.canMarkReceived && (
+                          <button
+                            onClick={() => handleMarkReceived(item)}
+                            disabled={actionLoading === item.id}
+                            className="flex-1 sm:flex-none px-4 py-2 bg-teal-600 text-white text-xs font-bold rounded-lg hover:bg-teal-700 disabled:opacity-50 transition-all shadow-sm shadow-teal-100"
+                          >
+                            {actionLoading === item.id ? 'Updating...' : 'Mark Received'}
+                          </button>
+                        )}
+                        {item.reportedUserId && (
+                          <button
+                            onClick={() => {
+                              setReportingItem(item);
+                              setIsReportModalOpen(true);
+                            }}
+                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-red-100 flex items-center justify-center"
+                            title="Report Donor"
+                          >
+                            <ShieldAlert size={18} />
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

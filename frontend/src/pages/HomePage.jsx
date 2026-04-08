@@ -27,42 +27,39 @@ const HomePage = () => {
     return (
         <div className="flex flex-col min-h-screen">
             {/* Hero Section */}
-            <div className="relative w-full h-[600px]">
+            <div className="relative w-full h-[85vh] md:h-[600px] overflow-hidden">
                 <img
                     src={heroImage}
                     alt="Helping hands"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover scale-110"
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center text-center px-4">
-                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg">
-                        Make a Difference Today
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60 flex flex-col justify-center items-center text-center px-6">
+                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-2xl tracking-tight leading-tight">
+                        Make a <span className="text-primary italic">Difference</span> Today
                     </h1>
-                    <p className="text-xl md:text-2xl text-gray-200 mb-10 max-w-2xl drop-shadow-md">
+                    <p className="text-lg md:text-2xl text-gray-200 mb-10 max-w-2xl drop-shadow-lg font-medium">
                         Join our community to connect directly with those in need.
                         Your contribution changes lives.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto px-4 sm:px-0">
                         {user?.role === 'RECEIVER' ? (
-                            <>
-                                <Link
-                                    to="/receiver"
-                                    className="px-8 py-4 bg-primary text-white rounded-full text-lg font-bold hover:bg-opacity-90 transition transform hover:scale-105 shadow-lg"
-                                >
-                                    Post Request
-                                </Link>
-                                
-                            </>
+                            <Link
+                                to="/receiver"
+                                className="px-8 py-4 bg-primary text-white rounded-2xl text-lg font-bold hover:bg-opacity-90 transition transform hover:scale-105 shadow-xl shadow-primary/30 text-center"
+                            >
+                                Post Request
+                            </Link>
                         ) : (
                             <Link
                                 to="/donor"
-                                className="px-8 py-4 bg-primary text-white rounded-full text-lg font-bold hover:bg-opacity-90 transition transform hover:scale-105 shadow-lg"
+                                className="px-8 py-4 bg-primary text-white rounded-2xl text-lg font-bold hover:bg-opacity-90 transition transform hover:scale-105 shadow-xl shadow-primary/30 text-center"
                             >
                                 Donate Now
                             </Link>
                         )}
                         <Link
                             to="/learn-more"
-                            className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-full text-lg font-bold hover:bg-white hover:text-gray-900 transition transform hover:scale-105"
+                            className="px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/50 text-white rounded-2xl text-lg font-bold hover:bg-white hover:text-gray-900 transition transform hover:scale-105 text-center"
                         >
                             Learn More
                         </Link>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Heart, LogOut, User, Image as ImageIcon, X, Upload } from 'lucide-react';
+import { Heart, LogOut, User, Image as ImageIcon, X, Upload, Menu } from 'lucide-react';
 import api from '../api';
 
 const Header = () => {
@@ -12,6 +12,7 @@ const Header = () => {
     const [uploading, setUploading] = useState(false);
 
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
@@ -95,63 +96,152 @@ const Header = () => {
 
     return (
         <>
-            <header className="bg-white shadow-sm">
-                <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-                <Link to={getLogoDestination()} className="flex items-center gap-2 text-2xl font-bold text-primary">
-                    <Heart className="fill-current" />
-                    <span>DonateHub</span>
-                </Link>
+            <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40 transition-all duration-300">
+                <div className="container mx-auto px-4 py-3 md:py-4 flex justify-between items-center">
+                    <Link to={getLogoDestination()} className="flex items-center gap-2 text-2xl font-bold text-primary z-[60]">
+                        <Heart className="fill-current w-6 h-6 md:w-8 md:h-8" />
+                        <span className="tracking-tight">DonateHub</span>
+                    </Link>
 
-                <nav className="flex items-center gap-6">
-                    <Link to="/about-us" className="text-sm font-medium text-gray-600 hover:text-primary hidden md:block">About Us</Link>
-                    <Link to="/contact" className="text-sm font-medium text-gray-600 hover:text-primary hidden md:block">Contact Us</Link>
-                    {user ? (
-                        <>
+                    {/* Desktop Navigation */}
+                    <nav className="hidden md:flex items-center gap-6">
+                        <Link to="/about-us" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">About Us</Link>
+                        <Link to="/contact" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Contact Us</Link>
+                        {user ? (
+                            <>
+                                {user.role === 'RECEIVER' && (
+                                    <>
+                                        <button onClick={() => setIsGalleryOpen(true)} className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+                                            <ImageIcon size={18} /> My Gallery
+                                        </button>
+                                        <Link to="/receiver-profile" className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+                                            {user.profileImageUrl ? (
+                                                <img src={getImageUrl(user.profileImageUrl)} alt="Profile" className="w-6 h-6 rounded-full object-cover border shadow-sm border-gray-200" />
+                                            ) : (
+                                                <User size={18} />
+                                            )}
+                                            {user.fullName || 'Profile'}
+                                        </Link>
+                                        <button onClick={() => setIsLogoutModalOpen(true)} className="flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700 transition-colors">
+                                            <LogOut size={18} /> Logout
+                                        </button>
+                                    </>
+                                )}
+                                {user.role === 'DONOR' && (
+                                    <>
+                                        <Link to="/donor-profile" className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+                                            {user.profileImageUrl ? (
+                                                <img src={getImageUrl(user.profileImageUrl)} alt="Profile" className="w-6 h-6 rounded-full object-cover border shadow-sm border-gray-200" />
+                                            ) : (
+                                                <User size={18} />
+                                            )}
+                                            {user.fullName || 'Profile'}
+                                        </Link>
+                                        <button onClick={() => setIsLogoutModalOpen(true)} className="flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700 transition-colors">
+                                            <LogOut size={18} /> Logout
+                                        </button>
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <div className="flex gap-4">
+                                <Link to="/login" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors">Login</Link>
+                                <Link to="/signup" className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-opacity-90 transition-all shadow-sm">Sign Up</Link>
+                            </div>
+                        )}
+                    </nav>
 
-                            {user.role === 'RECEIVER' && (
-                                <>
-                                    <button onClick={() => setIsGalleryOpen(true)} className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-primary">
-                                        <ImageIcon size={18} /> My Gallery
-                                    </button>
-                                    <Link to="/receiver-profile" className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-primary">
-                                        {user.profileImageUrl ? (
-                                            <img src={getImageUrl(user.profileImageUrl)} alt="Profile" className="w-6 h-6 rounded-full object-cover border shadow-sm border-gray-200" />
-                                        ) : (
-                                            <User size={18} />
-                                        )}
-                                        {user.fullName || 'Profile'}
-                                    </Link>
-                                    <button onClick={() => setIsLogoutModalOpen(true)} className="flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700">
-                                        <LogOut size={18} /> Logout
-                                    </button>
-                                </>
-                            )}
-                            {user.role === 'DONOR' && (
-                                <>
-                                    <Link to="/donor-profile" className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-primary">
-                                        {user.profileImageUrl ? (
-                                            <img src={getImageUrl(user.profileImageUrl)} alt="Profile" className="w-6 h-6 rounded-full object-cover border shadow-sm border-gray-200" />
-                                        ) : (
-                                            <User size={18} />
-                                        )}
-                                        {user.fullName || 'Profile'}
-                                    </Link>
-                                    <button onClick={() => setIsLogoutModalOpen(true)} className="flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700">
-                                        <LogOut size={18} /> Logout
-                                    </button>
-                                </>
-                            )}
+                    {/* Mobile Menu Toggle */}
+                    <button 
+                        className="md:hidden p-2 text-gray-600 hover:text-primary transition-all z-[60] rounded-lg hover:bg-gray-100"
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        aria-label="Toggle menu"
+                    >
+                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                </div>
 
-                        </>
-                    ) : (
-                        <div className="flex gap-4">
-                            <Link to="/login" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary">Login</Link>
-                            <Link to="/signup" className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-opacity-90">Sign Up</Link>
-                        </div>
-                    )}
-                </nav>
-            </div>
-        </header>
+                {/* Mobile Navigation Menu Drawer */}
+                <div className={`md:hidden fixed inset-0 z-50 transition-all duration-300 ${isMenuOpen ? 'visible' : 'invisible'}`}>
+                    {/* Backdrop */}
+                    <div 
+                        className={`absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`}
+                        onClick={() => setIsMenuOpen(false)}
+                    />
+                    
+                    {/* Drawer Content */}
+                    <nav className={`absolute top-0 right-0 h-full w-[280px] bg-white shadow-2xl transition-transform duration-300 ease-out transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} pt-20 px-4 flex flex-col gap-2 overflow-y-auto`}>
+                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mb-2">Navigation</div>
+                        <Link 
+                            to="/about-us" 
+                            className="flex items-center gap-4 p-4 text-sm font-semibold text-gray-700 hover:bg-primary/5 hover:text-primary rounded-xl transition-all"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            <Heart size={18} className="text-primary/60" /> About Us
+                        </Link>
+                        <Link 
+                            to="/contact" 
+                            className="flex items-center gap-4 p-4 text-sm font-semibold text-gray-700 hover:bg-primary/5 hover:text-primary rounded-xl transition-all"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            <Mail size={18} className="text-primary/60" /> Contact Us
+                        </Link>
+
+                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest px-4 mt-4 mb-2">Account</div>
+                        {user ? (
+                            <>
+                                {user.role === 'RECEIVER' && (
+                                    <button 
+                                        onClick={() => { setIsGalleryOpen(true); setIsMenuOpen(false); }} 
+                                        className="flex items-center gap-4 p-4 text-sm font-semibold text-gray-700 hover:bg-primary/5 hover:text-primary rounded-xl transition-all"
+                                    >
+                                        <ImageIcon size={18} className="text-primary/60" /> My Gallery
+                                    </button>
+                                )}
+                                <Link 
+                                    to={user.role === 'RECEIVER' ? "/receiver-profile" : "/donor-profile"}
+                                    className="flex items-center gap-4 p-4 text-sm font-semibold text-gray-700 hover:bg-primary/5 hover:text-primary rounded-xl transition-all"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    {user.profileImageUrl ? (
+                                        <img src={getImageUrl(user.profileImageUrl)} alt="Profile" className="w-8 h-8 rounded-full object-cover border border-gray-100" />
+                                    ) : (
+                                        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                                            <User size={16} className="text-gray-500" />
+                                        </div>
+                                    )}
+                                    {user.fullName || 'My Profile'}
+                                </Link>
+                                <div className="mt-auto pb-8">
+                                    <button 
+                                        onClick={() => { setIsLogoutModalOpen(true); setIsMenuOpen(false); }} 
+                                        className="w-full flex items-center gap-4 p-4 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                                    >
+                                        <LogOut size={18} /> Logout Account
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex flex-col gap-3 mt-4 px-2">
+                                <Link 
+                                    to="/login" 
+                                    className="w-full p-4 text-center text-sm font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    Login
+                                </Link>
+                                <Link 
+                                    to="/signup" 
+                                    className="w-full p-4 text-center text-sm font-bold text-white bg-primary hover:bg-primary-dark rounded-xl shadow-lg shadow-primary/20 transition-all"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    Create Account
+                                </Link>
+                            </div>
+                        )}
+                    </nav>
+                </div>
+            </header>
             
             {/* Gallery Modal */}
             {isGalleryOpen && (

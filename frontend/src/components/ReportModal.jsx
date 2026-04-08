@@ -49,7 +49,7 @@ const ReportModal = ({ isOpen, onClose, reportedUserId, reporterId, onSuccess })
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-y-auto max-h-[95vh] animate-in fade-in zoom-in duration-300 custom-scrollbar">
         <div className="bg-red-600 p-4 flex items-center justify-between text-white">
           <div className="flex items-center gap-2">
             <AlertTriangle size={24} />

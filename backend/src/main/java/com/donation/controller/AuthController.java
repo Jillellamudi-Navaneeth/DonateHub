@@ -19,12 +19,16 @@ public class AuthController {
 
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestBody java.util.Map<String, String> request) {
-        String email = request.get("email");
-        if (email == null || email.isBlank()) {
-            return ResponseEntity.badRequest().body(new com.donation.dto.ApiResponse<>(400, "Email is required", null));
+        try {
+            String email = request.get("email");
+            if (email == null || email.isBlank()) {
+                return ResponseEntity.badRequest().body(new com.donation.dto.ApiResponse<>(400, "Email is required", null));
+            }
+            otpService.generateOtp(email);
+            return ResponseEntity.ok(new com.donation.dto.ApiResponse<>(200, "OTP sent to your email", null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new com.donation.dto.ApiResponse<>(400, e.getMessage(), null));
         }
-        otpService.generateOtp(email);
-        return ResponseEntity.ok(new com.donation.dto.ApiResponse<>(200, "OTP sent to console", null));
     }
 
     @PostMapping("/register")

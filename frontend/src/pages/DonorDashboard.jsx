@@ -289,37 +289,37 @@ const DonorDashboard = () => {
                             Connect directly with people in need. Your small contribution can change a life.
                         </p>
 
-                        <div className="flex gap-4 flex-wrap">
+                        <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 md:gap-4 mt-8 md:mt-0">
                             <div
                                 onClick={() => handleBoxClick('all')}
-                                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition shadow-sm hover:scale-105"
+                                className="bg-white/20 backdrop-blur-md p-3 md:p-4 rounded-xl text-center cursor-pointer hover:bg-white/30 transition shadow-sm hover:scale-105 border border-white/20"
                             >
-                                <span className="block text-3xl font-bold">{counts.all}</span>
-                                <span className="text-sm opacity-90 font-medium">Total Activity</span>
+                                <span className="block text-2xl md:text-3xl font-bold">{counts.all}</span>
+                                <span className="text-[10px] md:text-sm opacity-90 font-bold uppercase tracking-wider">Total</span>
                             </div>
 
                             <div
                                 onClick={() => handleBoxClick('open')}
-                                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition shadow-sm hover:scale-105"
+                                className="bg-white/20 backdrop-blur-md p-3 md:p-4 rounded-xl text-center cursor-pointer hover:bg-white/30 transition shadow-sm hover:scale-105 border border-white/20"
                             >
-                                <span className="block text-3xl font-bold">{counts.open}</span>
-                                <span className="text-sm opacity-90 font-medium">Open Requests</span>
+                                <span className="block text-2xl md:text-3xl font-bold">{counts.open}</span>
+                                <span className="text-[10px] md:text-sm opacity-90 font-bold uppercase tracking-wider">Open</span>
                             </div>
 
                             <div
                                 onClick={() => handleBoxClick('active')}
-                                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition shadow-sm hover:scale-105"
+                                className="bg-white/20 backdrop-blur-md p-3 md:p-4 rounded-xl text-center cursor-pointer hover:bg-white/30 transition shadow-sm hover:scale-105 border border-white/20"
                             >
-                                <span className="block text-3xl font-bold">{counts.active}</span>
-                                <span className="text-sm opacity-90 font-medium">Active Items</span>
+                                <span className="block text-2xl md:text-3xl font-bold">{counts.active}</span>
+                                <span className="text-[10px] md:text-sm opacity-90 font-bold uppercase tracking-wider">Active</span>
                             </div>
 
                             <div
                                 onClick={() => handleBoxClick('fulfilled')}
-                                className="bg-white/20 backdrop-blur-sm p-4 rounded-lg text-center min-w-[120px] cursor-pointer hover:bg-white/30 transition shadow-sm hover:scale-105"
+                                className="bg-white/20 backdrop-blur-md p-3 md:p-4 rounded-xl text-center cursor-pointer hover:bg-white/30 transition shadow-sm hover:scale-105 border border-white/20"
                             >
-                                <span className="block text-3xl font-bold">{counts.fulfilled}</span>
-                                <span className="text-sm opacity-90 font-medium">Fulfilled</span>
+                                <span className="block text-2xl md:text-3xl font-bold">{counts.fulfilled}</span>
+                                <span className="text-[10px] md:text-sm opacity-90 font-bold uppercase tracking-wider">Done</span>
                             </div>
                         </div>
                     </div>
@@ -360,90 +360,89 @@ const DonorDashboard = () => {
                         ))}
                     </div>
 
-                    <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                    <div className="space-y-4 max-h-[500px] overflow-y-auto pr-1">
                         {historyItemsToShow.length === 0 ? (
                             <div className="text-center py-12 text-gray-500 bg-gray-50 rounded-xl border border-dashed">
                                 No records found for this category.
                             </div>
                         ) : (
                             historyItemsToShow.map((item) => (
-                                <div key={item.id} className="flex items-center gap-4 p-4 border rounded-xl hover:shadow-md transition bg-white group">
-                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-sm ${item.source === 'open_request' ? 'bg-blue-500' :
-                                        item.source === 'fulfillment' ? 'bg-primary' :
-                                            item.source === 'claim' ? 'bg-teal-500' : 'bg-green-500'
-                                        }`}>
-                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                        </svg>
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <h4 className="font-bold text-gray-900 group-hover:text-primary transition">{item.title} ({item.quantity})</h4>
-                                                <div className="flex items-center gap-2 mt-0.5">
-                                                    {item.receiver ? (
-                                                        <p className="text-sm text-gray-500">
-                                                            {item.prefix}{' '}
-                                                            <button
-                                                                onClick={() => setSelectedUserForModal(item.receiver)}
-                                                                className="text-primary hover:text-primary-dark hover:underline font-bold focus:outline-none transition-colors"
-                                                            >
-                                                                {item.receiver.organizationName || item.receiver.fullName || 'Receiver'}
-                                                            </button>
-                                                        </p>
-                                                    ) : (
-                                                        <p className="text-sm text-gray-500">{item.subtext}</p>
-                                                    )}
-                                                    {item.source === 'own_donation' && getUserTypeInfo(item.donorCount) && (
-                                                        <span className={`px-2 py-0.5 rounded text-xs font-bold border ${getUserTypeInfo(item.donorCount).bg} ${getUserTypeInfo(item.donorCount).color} ${getUserTypeInfo(item.donorCount).border}`}>
-                                                            {getUserTypeInfo(item.donorCount).type}
-                                                        </span>
-                                                    )}
+                                <div key={item.id} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 border rounded-xl hover:shadow-md transition bg-white group">
+                                    <div className="flex items-center gap-4 flex-1">
+                                        <div className={`w-12 h-12 shrink-0 rounded-xl flex items-center justify-center text-white shadow-sm ${item.source === 'open_request' ? 'bg-blue-500' :
+                                            item.source === 'fulfillment' ? 'bg-primary' :
+                                                item.source === 'claim' ? 'bg-teal-500' : 'bg-green-500'
+                                            }`}>
+                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                            </svg>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
+                                                <div className="min-w-0">
+                                                    <h4 className="font-bold text-gray-900 group-hover:text-primary transition truncate">{item.title} ({item.quantity})</h4>
+                                                    <div className="flex items-center gap-2 mt-0.5">
+                                                        {item.receiver ? (
+                                                            <p className="text-sm text-gray-500 truncate">
+                                                                {item.prefix}{' '}
+                                                                <button
+                                                                    onClick={() => setSelectedUserForModal(item.receiver)}
+                                                                    className="text-primary hover:text-primary-dark hover:underline font-bold focus:outline-none transition-colors"
+                                                                >
+                                                                    {item.receiver.organizationName || item.receiver.fullName || 'Receiver'}
+                                                                </button>
+                                                            </p>
+                                                        ) : (
+                                                            <p className="text-sm text-gray-500 truncate">{item.subtext}</p>
+                                                        )}
+                                                    </div>
                                                 </div>
+                                                <span className={`self-start sm:self-auto px-3 py-1 text-[10px] font-bold rounded-full border uppercase tracking-wider shrink-0 ${getStatusColor(item.status)}`}>
+                                                    {['COMPLETED', 'FULFILLED', 'RECEIVED', 'DELIVERED'].includes(item.status) ? 'COMPLETED' : item.status}
+                                                </span>
                                             </div>
-                                            <span className={`px-3 py-1 text-xs font-bold rounded-full border ${getStatusColor(item.status)}`}>
-                                                {['COMPLETED', 'FULFILLED', 'RECEIVED', 'DELIVERED'].includes(item.status) ? 'COMPLETED & FULFILLED' : item.status}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-3 mt-2">
-                                            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 bg-gray-50 px-2 py-0.5 rounded border">
-                                                {item.type}
-                                            </span>
-                                            <span className="text-xs text-gray-400">
-                                                {item.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                            </span>
-                                        </div>
-                                        {item.source === 'claim' && item.status === 'PENDING' && (
-                                            <div className="flex gap-2 mt-3">
-                                                <button
-                                                    onClick={() => handleAcceptClaim(item.realId)}
-                                                    disabled={historyLoading}
-                                                    className="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded hover:bg-green-600 disabled:opacity-50"
-                                                >
-                                                    Accept
-                                                </button>
-                                                <button
-                                                    onClick={() => handleRejectClaim(item.realId)}
-                                                    disabled={historyLoading}
-                                                    className="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded hover:bg-red-600 disabled:opacity-50"
-                                                >
-                                                    Reject
-                                                </button>
+                                            <div className="flex items-center gap-3 mt-2">
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 bg-gray-50 px-2 py-0.5 rounded border">
+                                                    {item.type}
+                                                </span>
+                                                <span className="text-xs text-gray-400">
+                                                    {item.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                </span>
                                             </div>
-                                        )}
-                                        {/* Delete button for donor's own donation posts */}
-                                        {item.source === 'own_donation' && !['COMPLETED', 'FULLY_CLAIMED'].includes(item.status) && (
-                                            <div className="mt-3">
+                                        </div>
+                                    </div>
+                                    
+                                    {(item.source === 'claim' && item.status === 'PENDING') || (item.source === 'own_donation' && !['COMPLETED', 'FULLY_CLAIMED'].includes(item.status)) ? (
+                                        <div className="flex gap-2 mt-2 sm:mt-0 sm:ml-auto w-full sm:w-auto border-t sm:border-0 pt-3 sm:pt-0">
+                                            {item.source === 'claim' && item.status === 'PENDING' && (
+                                                <>
+                                                    <button
+                                                        onClick={() => handleAcceptClaim(item.realId)}
+                                                        disabled={historyLoading}
+                                                        className="flex-1 sm:flex-none px-4 py-2 bg-green-500 text-white text-xs font-bold rounded-lg hover:bg-green-600 disabled:opacity-50 transition-colors shadow-sm shadow-green-100"
+                                                    >
+                                                        Accept
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleRejectClaim(item.realId)}
+                                                        disabled={historyLoading}
+                                                        className="flex-1 sm:flex-none px-4 py-2 bg-red-500 text-white text-xs font-bold rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors shadow-sm shadow-red-100"
+                                                    >
+                                                        Reject
+                                                    </button>
+                                                </>
+                                            )}
+                                            {item.source === 'own_donation' && !['COMPLETED', 'FULLY_CLAIMED'].includes(item.status) && (
                                                 <button
                                                     onClick={() => handleDeleteDonationPost(item.id.replace('don-', '') * 1)}
-                                                    className="flex items-center gap-1 px-3 py-1 text-xs font-bold text-red-600 bg-red-50 border border-red-200 rounded hover:bg-red-100 transition-colors"
+                                                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold text-red-600 bg-red-50 border border-red-100 rounded-lg hover:bg-red-100 transition-colors group/del"
                                                 >
-                                                    <Trash2 size={12} />
+                                                    <Trash2 size={14} className="group-hover/del:scale-110 transition-transform" />
                                                     Delete Post
                                                 </button>
-                                            </div>
-                                        )}
-                                    </div>
+                                            )}
+                                        </div>
+                                    ) : null}
                                 </div>
                             ))
                         )}
@@ -520,7 +519,7 @@ const DonorDashboard = () => {
             {viewMode === 'browse' && (
                 <>
                     {/* Filters */}
-                    <div className="flex flex-col md:flex-row gap-4 mb-8 bg-white p-6 rounded-xl shadow-md border items-stretch md:items-center">
+                    <div className="flex flex-col lg:flex-row gap-4 mb-8 bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 items-stretch lg:items-center transition-all hover:shadow-md">
 
                         {/* Category Filter */}
                         <div className="flex-1">
