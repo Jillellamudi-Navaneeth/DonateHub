@@ -1,4 +1,4 @@
-package com.donatehub.config;
+package com.donation.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,13 +11,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors() // ✅ THIS FIXES YOUR ISSUE
-            .and()
-            .csrf().disable()
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> {})
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/**").permitAll()
-                .anyRequest().authenticated()
-            );
+                .anyRequest().permitAll() // ✅ allow everything
+            )
+            .formLogin(form -> form.disable()) // ❌ disable login page
+            .httpBasic(basic -> basic.disable()); // ❌ disable auth popup
 
         return http.build();
     }
